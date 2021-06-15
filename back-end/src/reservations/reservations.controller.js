@@ -46,8 +46,11 @@ async function isDataValid(req, res, next) {
   if (!reservation_time.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/g)) {
     return next({ status: 400, message: "reservation_time is not valid." });
   }
-  if (typeof people !== "number") {
-    return next({ status: 400, message: "people must be a number" });
+  if (typeof people !== "number" || people < 0) {
+    return next({
+      status: 400,
+      message: "people must be a non-negative number",
+    });
   }
   next();
 }
