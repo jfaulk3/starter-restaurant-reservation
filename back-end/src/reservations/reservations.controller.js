@@ -44,9 +44,11 @@ async function isDataValid(req, res, next) {
     return next({ status: 400, message: "reservation_date is not valid." });
   }
   if (!reservation_time.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/g)) {
+    //Format must be HH:MM
     return next({ status: 400, message: "reservation_time is not valid." });
   }
-  if (typeof people !== "number" || people < 0) {
+  console.log(people, typeof people);
+  if (isNaN(Number(people)) || people < 0) {
     return next({
       status: 400,
       message: "people must be a non-negative number",
