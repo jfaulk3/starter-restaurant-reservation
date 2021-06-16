@@ -28,11 +28,11 @@ async function isDataValid(req, res, next) {
     });
   }
   const {
-    first_name = "",
-    last_name = "",
-    mobilePhone = "",
-    reservation_date = "",
-    reservation_time = "",
+    first_name = null,
+    last_name = null,
+    mobilePhone = null,
+    reservation_date = null,
+    reservation_time = null,
     people = null,
   } = data;
   for (const param of params) {
@@ -66,6 +66,20 @@ async function isDataValid(req, res, next) {
     return next({
       status: 400,
       message: "people must be a non-negative number",
+    });
+  }
+  const businessOpen = new Date(reservation_date);
+  const businessClose = new Date(reservation_date);
+  businessOpen.setHours(10, 30, 0); // 10:30 AM
+  businessClose.setHours(21, 30, 0); // 9:30 pm
+
+  const [hours, minutes] = reservation_time.split(":");
+  curDate.setHours(hours, minutes);
+
+  if (curDate < businessOpen || curDate > businessClose) {
+    return next({
+      status: 400,
+      message: "reservation_time is not available.",
     });
   }
   next();
