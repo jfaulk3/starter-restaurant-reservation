@@ -40,15 +40,29 @@ async function isDataValid(req, res, next) {
       return next({ status: 400, message: `${param} is invalid` });
     }
   }
+  const curDate = new Date(reservation_date);
+  const todayDate = Date.now();
   if (isNaN(new Date(reservation_date))) {
     return next({ status: 400, message: "reservation_date is not valid." });
+  }
+  if (curDate < todayDate) {
+    return next({
+      status: 400,
+      message: "reservation_date must be in the future.",
+    });
+  }
+  if (curDate.getUTCDay() === 2) {
+    //According to documentation, 2 represents tuesday.
+    return next({
+      status: 400,
+      message: "The restaurant is closed this day.",
+    });
   }
   if (!reservation_time.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/g)) {
     //Format must be HH:MM
     return next({ status: 400, message: "reservation_time is not valid." });
   }
-  console.log(people, typeof people);
-  if (isNaN(Number(people)) || people < 0) {
+  if (typeof people !== "number" || people < 0) {
     return next({
       status: 400,
       message: "people must be a non-negative number",
