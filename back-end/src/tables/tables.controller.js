@@ -83,6 +83,25 @@ async function isSeatReservationValid(req, res, next) {
 async function update(req, res, next) {
   res.json({ data: await service.update(req.body.data) });
 }
+
+async function doesTableExist(req, res, next) {
+  const table_id = Number(req.params.table_id);
+  const findTable = await service.read(table_id);
+  if (findTable) {
+    res.locals.table = findTable;
+    return next();
+  }
+  return next({ status: 404, message: `Table id, ${table_id} does not exist` });
+}
+
+async function destroy(req, res, next) {
+  findTable = res.locals.table;
+  if (findTable.reservation_id === null) {
+    return next({ status: 400, message: `table is not occupied` });
+  }
+  await service.delete(findTable.table_id);
+  res.sendStatus(200);
+}
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [asyncErrorBoundary(isDataValid), asyncErrorBoundary(create)],
@@ -90,4 +109,5 @@ module.exports = {
     asyncErrorBoundary(isSeatReservationValid),
     asyncErrorBoundary(update),
   ],
+  delete: [asyncErrorBoundary(doesTableExist), asyncErrorBoundary(destroy)],
 };

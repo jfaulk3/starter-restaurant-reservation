@@ -21,4 +21,17 @@ function findReservation(reservation_id) {
 function update(table) {
   return knex("tables").update({ ...table }, "*");
 }
-module.exports = { list, create, read, findReservation, update };
+
+function destroy(table_id) {
+  return knex("tables")
+    .update({ reservation_id: null }, "*")
+    .where({ table_id });
+}
+module.exports = {
+  list,
+  create,
+  read,
+  findReservation,
+  update,
+  delete: destroy,
+};

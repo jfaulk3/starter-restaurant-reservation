@@ -33,6 +33,7 @@ async function isDataValid(req, res, next) {
     reservation_date = null,
     reservation_time = null,
     people = null,
+    status = "booked",
   } = data;
   for (const param of params) {
     if (!data[param]) {
@@ -79,6 +80,13 @@ async function isDataValid(req, res, next) {
     return next({
       status: 400,
       message: "reservation_time is not available.",
+    });
+  }
+
+  if (status !== "booked") {
+    return next({
+      status: 400,
+      message: `New reservations cannot have status of: ${status}`,
     });
   }
   next();
