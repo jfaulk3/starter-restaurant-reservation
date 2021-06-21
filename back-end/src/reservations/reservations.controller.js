@@ -1,4 +1,3 @@
-const { as } = require("../db/connection");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./reservations.service");
 /**
@@ -12,7 +11,7 @@ async function list(req, res) {
 }
 
 async function isDataValid(req, res, next) {
-  const { data } = req.body;
+  const { data = {} } = req.body;
   const params = [
     "first_name",
     "last_name",
@@ -85,11 +84,29 @@ async function isDataValid(req, res, next) {
   next();
 }
 
+async function doesReservationExist(req, res, next) {
+  const reservation_id = Number(req.params.reservation_id);
+  const findReservation = await service.read(reservation_id);
+  if (!findReservation) {
+    return next({
+      status: 404,
+      message: `reservation id, ${reservation_id}, does not exist.`,
+    });
+  }
+  res.locals.reservation = findReservation;
+  next();
+}
+
 async function create(req, res) {
   res.status(201).json({ data: await service.create(req.body.data) });
+}
+
+function read(req, res) {
+  res.json({ data: res.locals.reservation });
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [asyncErrorBoundary(isDataValid), asyncErrorBoundary(create)],
+  read: [asyncErrorBoundary(doesReservationExist), read],
 };
