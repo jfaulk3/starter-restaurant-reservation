@@ -105,6 +105,24 @@ async function doesReservationExist(req, res, next) {
   next();
 }
 
+async function isStatusValid(req, res, next) {
+  const validStatus = ["booked", "seated", "finished"];
+  const reservation_id = Number(req.params.reservation_id);
+  const { status = {} } = req.body.data;
+  if (!validStatus.includes(status)) {
+    return next({ status: 400, message: `Status: ${status} is invalid.` });
+  }
+  const findReservation = await service.read(reservation_id);
+  if (findReservation.status === "finished") {
+    return next({
+      status: 400,
+      message: "a finished reservation cannot be updated",
+    });
+  }
+  res.locals.reservation = findReservation;
+  next();
+}
+
 async function create(req, res) {
   res.status(201).json({ data: await service.create(req.body.data) });
 }
@@ -113,8 +131,21 @@ function read(req, res) {
   res.json({ data: res.locals.reservation });
 }
 
+async function update(req, res) {
+  const data = await service.update(
+    res.locals.reservation,
+    req.body.data.status
+  );
+  res.json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [asyncErrorBoundary(isDataValid), asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(doesReservationExist), read],
+  update: [
+    asyncErrorBoundary(doesReservationExist),
+    asyncErrorBoundary(isStatusValid),
+    asyncErrorBoundary(update),
+  ],
 };

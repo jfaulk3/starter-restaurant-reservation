@@ -44,10 +44,9 @@ async function create(req, res) {
 }
 
 async function isSeatReservationValid(req, res, next) {
-  const { data = {} } = req.body;
+  const { data } = req.body;
   const table_id = Number(req.params.table_id);
   const params = ["reservation_id"];
-  const { reservation_id = null } = data;
   if (!data) {
     return next({
       status: 400,
@@ -59,9 +58,12 @@ async function isSeatReservationValid(req, res, next) {
       return next({ status: 400, message: `${param} is invalid` });
     }
   }
-  const findReservation = await service.findReservation(reservation_id);
   const findTable = await service.read(table_id);
-
+  if (findTable.reservation_id !== null) {
+    return next({ status: 400, message: `table is occupied` });
+  }
+  const { reservation_id } = data;
+  const findReservation = await service.findReservation(reservation_id);
   if (!findReservation) {
     return next({
       status: 404,
@@ -74,14 +76,17 @@ async function isSeatReservationValid(req, res, next) {
       message: `table capacity is less than the number of people in reservation`,
     });
   }
-  if (findTable.reservation_id !== null) {
-    return next({ status: 400, message: `table is occupied` });
+  if(findReservation.status === 'seated'){
+    return next({status: 400, message: `Reservation id, ${reservation_id} is already seated`})
   }
+  findTable.reservation_id = findReservation.reservation_id;
+  res.locals.table = findTable;
   next();
 }
 
 async function update(req, res, next) {
-  res.json({ data: await service.update(req.body.data) });
+  const table = res.locals.table;
+  res.json({ data: await service.update(table) });
 }
 
 async function doesTableExist(req, res, next) {
@@ -99,7 +104,7 @@ async function destroy(req, res, next) {
   if (findTable.reservation_id === null) {
     return next({ status: 400, message: `table is not occupied` });
   }
-  await service.delete(findTable.table_id);
+  await service.delete(findTable);
   res.sendStatus(200);
 }
 module.exports = {
