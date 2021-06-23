@@ -4,14 +4,14 @@ const service = require("./reservations.service");
  * List handler for reservation resources
  */
 async function list(req, res, next) {
-  if(req.query.date){
-    res.json({
+  if (req.query.date) {
+    return res.json({
       data: await service.list(req.query.date),
     });
-  }else if(req.query.mobile_number){
-    res.json({data: await service.search(req.query.mobile_number)})
+  } else if (req.query.mobile_number) {
+    return res.json({ data: await service.search(req.query.mobile_number) });
   }
-  next({status: 400, message: 'unknown query'})
+  next({ status: 400, message: "unknown query" });
 }
 
 async function isDataValid(req, res, next) {
@@ -90,7 +90,7 @@ async function isDataValid(req, res, next) {
   next();
 }
 
-function isReservationBooked(req, res, next){
+function isReservationBooked(req, res, next) {
   const status = res.locals.status;
   if (status !== "booked") {
     return next({
@@ -98,7 +98,7 @@ function isReservationBooked(req, res, next){
       message: `New reservations cannot have status of: ${status}`,
     });
   }
-  next()
+  next();
 }
 
 async function doesReservationExist(req, res, next) {
@@ -115,7 +115,7 @@ async function doesReservationExist(req, res, next) {
 }
 
 async function isStatusValid(req, res, next) {
-  const validStatus = ["booked", "seated", "finished", 'cancelled', 'none'];
+  const validStatus = ["booked", "seated", "finished", "cancelled", "none"];
   const reservation_id = Number(req.params.reservation_id);
   const { status = {} } = req.body.data;
   if (!validStatus.includes(status)) {
@@ -147,21 +147,29 @@ async function update(req, res) {
   res.json({ data });
 }
 
-async function resUpdate(req, res){
+async function resUpdate(req, res) {
   const reservation = req.body.data;
-  reservation.reservation_id = Number(req.params.reservation_id)
-  reservation.status = res.locals.reservation.status
-  res.json({data: await service.update(reservation)})
+  reservation.reservation_id = Number(req.params.reservation_id);
+  reservation.status = res.locals.reservation.status;
+  res.json({ data: await service.update(reservation) });
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [asyncErrorBoundary(isDataValid),isReservationBooked, asyncErrorBoundary(create)],
+  create: [
+    asyncErrorBoundary(isDataValid),
+    isReservationBooked,
+    asyncErrorBoundary(create),
+  ],
   read: [asyncErrorBoundary(doesReservationExist), read],
   update: [
     asyncErrorBoundary(doesReservationExist),
     asyncErrorBoundary(isStatusValid),
     asyncErrorBoundary(update),
   ],
-  resUpdate: [asyncErrorBoundary(doesReservationExist), asyncErrorBoundary(isDataValid), asyncErrorBoundary(resUpdate)]
+  resUpdate: [
+    asyncErrorBoundary(doesReservationExist),
+    asyncErrorBoundary(isDataValid),
+    asyncErrorBoundary(resUpdate),
+  ],
 };

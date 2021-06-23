@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-function NewReservation() {
+function NewReservation({ setDate }) {
   const history = useHistory();
   const API_BASE_URL =
     process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
@@ -13,7 +13,7 @@ function NewReservation() {
     reservation_time: "",
     people: 1,
   });
-  const {
+  let {
     first_name,
     last_name,
     mobile_number,
@@ -31,6 +31,7 @@ function NewReservation() {
 
   const onSubmitForm = async (event) => {
     event.preventDefault();
+    people = Number(people);
     try {
       const body = {
         data: {
@@ -47,6 +48,8 @@ function NewReservation() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      setDate(reservation_date);
+      history.push("/dashboard");
     } catch (error) {
       console.error(error.message);
     }
@@ -100,7 +103,7 @@ function NewReservation() {
             min="1"
             onChange={(e) => onChange(e)}
           />
-          <button>Submit</button>
+          <button type="submit">Submit</button>
         </form>
         <button onClick={cancelHandler}>Cancel</button>
       </div>
