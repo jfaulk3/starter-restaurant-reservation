@@ -44,17 +44,22 @@ async function isDataValid(req, res, next) {
       return next({ status: 400, message: `${param} is invalid` });
     }
   }
-  const curDate = new Date(`${reservation_date}T${reservation_time}`);
-  const todayDate = Date.now();
+
   if (isNaN(new Date(reservation_date))) {
     return next({ status: 400, message: "reservation_date is not valid." });
   }
+
+  const date = `${reservation_date} ${reservation_time} UTC-05:00`;
+  const curDate = new Date(date);
+  const todayDate = Date.now();
+
   if (curDate < todayDate) {
     return next({
       status: 400,
       message: "reservation_date must be in the future.",
     });
   }
+
   if (curDate.getUTCDay() === 2) {
     //According to documentation, 2 represents tuesday.
     return next({
@@ -73,18 +78,22 @@ async function isDataValid(req, res, next) {
       message: "people must be a non-negative number",
     });
   }
-  const businessOpen = new Date();
-  const businessClose = new Date();
+
+  const businessOpen = new Date(date);
+  const businessClose = new Date(date);
   businessOpen.setHours(10, 30, 0); // 10:30 AM
   businessClose.setHours(21, 30, 0); // 9:30 pm
 
-  const [hours, minutes] = reservation_time.split(":");
-  curDate.setHours(hours, minutes);
-
-  if (curDate < businessOpen || curDate > businessClose) {
+  if (curDate < businessOpen) {
     return next({
       status: 400,
-      message: "reservation_time is not available.",
+      message: "reservation_time is too early.",
+    });
+  }
+  if (curDate > businessClose) {
+    return next({
+      status: 400,
+      message: "reservation_time is too late.",
     });
   }
   res.locals.status = status;

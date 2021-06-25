@@ -35,11 +35,6 @@ function NewReservation({ setDate }) {
     history.goBack();
   };
 
-  const addErrors = (errors) => {
-    setErrors(errors);
-    return errors.length;
-  };
-
   const onSubmitForm = async (event) => {
     event.preventDefault();
     try {
@@ -54,7 +49,9 @@ function NewReservation({ setDate }) {
         },
       };
 
-      if (addErrors(isReservationValid(body)) === 0) {
+      const invalid = isReservationValid(body);
+
+      if (invalid.length === 0) {
         if (reservation_id) {
           await fetch(`${API_BASE_URL}/reservations/${reservation_id}`, {
             method: "PUT",
@@ -62,7 +59,7 @@ function NewReservation({ setDate }) {
             body: JSON.stringify(body),
           });
           setDate(reservation_date);
-          history.goBack();
+          history.push("/dashboard");
         } else {
           await fetch(`${API_BASE_URL}/reservations`, {
             method: "POST",
@@ -72,6 +69,8 @@ function NewReservation({ setDate }) {
           setDate(reservation_date);
           history.push("/dashboard");
         }
+      } else {
+        setErrors(invalid);
       }
     } catch (error) {
       console.error(error.message);
@@ -91,12 +90,12 @@ function NewReservation({ setDate }) {
   return (
     <React.Fragment>
       <div className="new-reservation">
-        <h2>Add a new reservation</h2>
+        <h2>Add/Edit a Reservation</h2>
         {errors.map((error) => {
           return (
-            <p key={error} className="alert alert-danger">
-              {error}
-            </p>
+            <div key={error + first_name} className="alert alert-danger">
+              Error: {error}
+            </div>
           );
         })}
 

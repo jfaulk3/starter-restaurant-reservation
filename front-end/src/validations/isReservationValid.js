@@ -1,9 +1,10 @@
 function isReservationValid({ data: { reservation_date, reservation_time } }) {
   const errors = [];
-
+  const date = `${reservation_date} ${reservation_time} UTC-05:00`;
   //Error checking the date
-  const curDate = new Date(`${reservation_date}T${reservation_time}`);
+  const curDate = new Date(date);
   const todayDate = Date.now();
+
   if (curDate < todayDate) {
     errors.push("Your reservation date must be in the future.");
   }
@@ -14,18 +15,25 @@ function isReservationValid({ data: { reservation_date, reservation_time } }) {
   }
 
   //Error checking the time
-  const businessOpen = new Date();
-  const businessClose = new Date();
+  const businessOpen = new Date(date);
+  const businessEndRes = new Date(date);
+  const businessClose = new Date(date);
+
   businessOpen.setHours(10, 30, 0); // 10:30 AM
-  businessClose.setHours(21, 30, 0); // 9:30 pm
+  businessEndRes.setHours(21, 30, 0); // 9:30 pm
+  businessClose.setHours(22, 30, 0); // 10:30 pm
 
   const [hours, minutes] = reservation_time.split(":");
   curDate.setHours(hours, minutes);
-  if (curDate < businessOpen) {
+
+  if (curDate.getTime() < businessOpen.getTime()) {
     errors.push("The reservation time is before open time.");
   }
-  if (curDate > businessClose) {
-    errors.push("The reservation time is too close to(or after) closing time.");
+  if (curDate.getTime() > businessClose.getTime()) {
+    errors.push("The reservation time is after closing time.");
+  }
+  if (curDate.getTime() > businessEndRes.getTime()) {
+    errors.push("The reservation time is too close to closing time.");
   }
   return errors;
 }

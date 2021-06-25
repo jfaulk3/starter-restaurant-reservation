@@ -27,10 +27,7 @@ function ReservationList({ reservations, date, setReservations = null }) {
   }
   return reservations.map((reservation) => {
     return (
-      <div
-        key={reservation.reservation_id}
-        href={`/reservations/${reservation.reservation_id}/seat`}
-      >
+      <div key={reservation.reservation_id} className="my-4">
         <div className="row m-0 p-0">
           <div className="col">{reservation.first_name}</div>
           <div className="col"> {reservation.last_name}</div>
@@ -55,6 +52,7 @@ function ReservationList({ reservations, date, setReservations = null }) {
             <Link
               className="btn btn-secondary col col-1"
               to={`/reservations/${reservation.reservation_id}/seat`}
+              href={`/reservations/${reservation.reservation_id}/seat`}
             >
               Seat
             </Link>
