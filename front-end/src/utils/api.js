@@ -63,7 +63,39 @@ export async function listReservations(params, signal) {
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
+
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
+}
+
+export async function listTables(signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+
+  return await fetchJson(url, { headers, signal }, []);
+}
+export async function listNumbers(number, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations?mobile_number=${number}`);
+
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function deleteTable(id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${id}/seat`);
+  await fetchJson(url, { method: "DELETE", headers, signal }, []);
+}
+
+export async function cancelReservation(id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${id}/status`);
+  await fetch(url, {
+    method: "PuT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: { status: "cancelled" } }),
+    signal,
+  });
+}
+
+export async function getReservation(id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${id}`);
+  return await fetchJson(url, { headers, signal }, []);
 }

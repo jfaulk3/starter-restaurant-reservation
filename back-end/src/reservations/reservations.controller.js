@@ -44,7 +44,7 @@ async function isDataValid(req, res, next) {
       return next({ status: 400, message: `${param} is invalid` });
     }
   }
-  const curDate = new Date(reservation_date);
+  const curDate = new Date(`${reservation_date}T${reservation_time}`);
   const todayDate = Date.now();
   if (isNaN(new Date(reservation_date))) {
     return next({ status: 400, message: "reservation_date is not valid." });
@@ -62,7 +62,8 @@ async function isDataValid(req, res, next) {
       message: "The restaurant is closed this day.",
     });
   }
-  if (!reservation_time.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/g)) {
+
+  if (!reservation_time.match(/([01]?[0-9]|2[0-3]):[0-5][0-9]/g)) {
     //Format must be HH:MM
     return next({ status: 400, message: "reservation_time is not valid." });
   }
@@ -72,8 +73,8 @@ async function isDataValid(req, res, next) {
       message: "people must be a non-negative number",
     });
   }
-  const businessOpen = new Date(reservation_date);
-  const businessClose = new Date(reservation_date);
+  const businessOpen = new Date();
+  const businessClose = new Date();
   businessOpen.setHours(10, 30, 0); // 10:30 AM
   businessClose.setHours(21, 30, 0); // 9:30 pm
 

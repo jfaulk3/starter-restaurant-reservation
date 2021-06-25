@@ -1,37 +1,47 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import formatReservationDate from "../utils/format-reservation-date";
+import { getReservation } from "../utils/api";
+import isReservationValid from "../validations/isReservationValid";
 
 function NewReservation({ setDate }) {
-  const history = useHistory();
-  const API_BASE_URL =
-    process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-  const [inputs, setInputs] = useState({
+  const defaultInputs = {
     first_name: "",
     last_name: "",
     mobile_number: "",
     reservation_date: "",
     reservation_time: "",
     people: 1,
-  });
-  let {
+  };
+  const history = useHistory();
+  const { reservation_id } = useParams();
+  const API_BASE_URL =
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+  const [reservation, setReservation] = useState({ ...defaultInputs });
+  const {
     first_name,
     last_name,
     mobile_number,
     reservation_date,
     reservation_time,
     people,
-  } = inputs;
+  } = reservation;
   const onChange = ({ target: { name, value } }) => {
-    setInputs({ ...inputs, [name]: value });
+    setReservation({ ...reservation, [name]: value });
   };
+  const [errors, setErrors] = useState([]);
 
   const cancelHandler = () => {
     history.goBack();
   };
 
+  const addErrors = (errors) => {
+    setErrors(errors);
+    return errors.length;
+  };
+
   const onSubmitForm = async (event) => {
     event.preventDefault();
-    people = Number(people);
     try {
       const body = {
         data: {
@@ -40,25 +50,56 @@ function NewReservation({ setDate }) {
           mobile_number,
           reservation_date,
           reservation_time,
-          people,
+          people: Number(people),
         },
       };
-      await fetch(`${API_BASE_URL}/reservations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      setDate(reservation_date);
-      history.push("/dashboard");
+
+      if (addErrors(isReservationValid(body)) === 0) {
+        if (reservation_id) {
+          await fetch(`${API_BASE_URL}/reservations/${reservation_id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          setDate(reservation_date);
+          history.goBack();
+        } else {
+          await fetch(`${API_BASE_URL}/reservations`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          setDate(reservation_date);
+          history.push("/dashboard");
+        }
+      }
     } catch (error) {
       console.error(error.message);
     }
   };
+  useEffect(() => {
+    const abortController = new AbortController();
+    if (reservation_id) {
+      getReservation(reservation_id, abortController.signal)
+        .then(formatReservationDate)
+        .then(setReservation);
+    }
+
+    return () => abortController.abort;
+  }, [reservation_id]);
 
   return (
     <React.Fragment>
       <div className="new-reservation">
-        <h2>Add new reservation</h2>
+        <h2>Add a new reservation</h2>
+        {errors.map((error) => {
+          return (
+            <p key={error} className="alert alert-danger">
+              {error}
+            </p>
+          );
+        })}
+
         <form onSubmit={onSubmitForm}>
           <input
             type="text"

@@ -12,7 +12,6 @@ async function list(req, res) {
 async function isDataValid(req, res, next) {
   const { data = {} } = req.body;
   const params = ["table_name", "capacity"];
-  const { table_name = null, capacity = null } = data;
   if (!data) {
     return next({
       status: 400,
@@ -24,6 +23,8 @@ async function isDataValid(req, res, next) {
       return next({ status: 400, message: `${param} is invalid` });
     }
   }
+  const { table_name, capacity } = data;
+
   if (table_name.length <= 1) {
     return next({
       status: 400,
@@ -76,8 +77,11 @@ async function isSeatReservationValid(req, res, next) {
       message: `table capacity is less than the number of people in reservation`,
     });
   }
-  if(findReservation.status === 'seated'){
-    return next({status: 400, message: `Reservation id, ${reservation_id} is already seated`})
+  if (findReservation.status === "seated") {
+    return next({
+      status: 400,
+      message: `Reservation id, ${reservation_id} is already seated`,
+    });
   }
   findTable.reservation_id = findReservation.reservation_id;
   res.locals.table = findTable;
