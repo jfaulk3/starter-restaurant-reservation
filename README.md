@@ -8,8 +8,8 @@ Link to live application: https://jfaulk3-restaurant-application.vercel.app/dash
 
 ### Technologies used
 
-Language: JavaScript
-Backend: Nodejs, Expressjs, Postgresql
+Language: JavaScript  
+Backend: Nodejs, Expressjs, Postgresql  
 Frontend: React
 
 ### How to run
