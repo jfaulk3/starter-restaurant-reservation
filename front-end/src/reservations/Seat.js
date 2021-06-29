@@ -77,8 +77,8 @@ function Seat() {
   const { last_name, people } = reservation;
 
   return (
-    <div className="justify-content-center">
-      <h1 className="text-center py-4">Seat Reservation</h1>
+    <div>
+      <h1 className="text-center mx-auto py-4">Seat Reservation</h1>
       {seatErrors.map((error) => {
         return (
           <p key={error} className="alert alert-danger">
@@ -87,14 +87,14 @@ function Seat() {
         );
       })}
       <form className="col-lg-10" onSubmit={onSubmitForm}>
-        <h3 className="text-black">
+        <h3 className="text-black text-center">
           {last_name} / Party Size: {people}
         </h3>
         <div className="form-group">
           <label htmlFor="select_table"></label>
           <select
             onChange={onChange}
-            className="form-control"
+            className="form-control w-50 mx-auto"
             id="select_table"
             name="table_id"
           >
@@ -110,11 +110,14 @@ function Seat() {
             })}
           </select>
         </div>
-        <div className="btns mt-2">
-          <button className="btn btn-dark mr-2" type="submit">
+        <div className="d-flex flex-row justify-content-center">
+          <button className="btn btn-primary form-control w-25" type="submit">
             Submit
           </button>
-          <button onClick={cancelHandler} className="btn btn-secondary">
+          <button
+            onClick={cancelHandler}
+            className="btn btn-secondary form-control w-25"
+          >
             Cancel
           </button>
         </div>

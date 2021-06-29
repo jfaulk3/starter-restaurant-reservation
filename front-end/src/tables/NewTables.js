@@ -52,7 +52,7 @@ function NewTables() {
   return (
     <React.Fragment>
       <div className="new-error">
-        <h2>Add a new table</h2>
+        <h2 className="text-center">Add a new table</h2>
         {tableErrors.map((error) => {
           return (
             <p key={error} className="alert alert-danger">
@@ -66,6 +66,7 @@ function NewTables() {
             type="text"
             name="table_name"
             placeholder="table_name"
+            className="form-control w-50 mx-auto"
             value={table_name}
             onChange={(e) => onChange(e)}
           />
@@ -73,13 +74,26 @@ function NewTables() {
             type="number"
             name="capacity"
             placeholder="capacity"
+            className="form-control w-50 mx-auto"
             value={capacity}
             min="0"
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Submit</button>
+          <div className="d-flex flex-row justify-content-center">
+            <button
+              type="submit"
+              className=" btn btn-primary form-control w-25"
+            >
+              Submit
+            </button>
+            <button
+              onClick={cancelHandler}
+              className=" btn btn-secondary form-control w-25"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
-        <button onClick={cancelHandler}>Cancel</button>
       </div>
     </React.Fragment>
   );

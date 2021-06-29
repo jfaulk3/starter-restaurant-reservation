@@ -90,7 +90,7 @@ function NewReservation({ setDate }) {
   return (
     <React.Fragment>
       <div className="new-reservation">
-        <h2>Add/Edit a Reservation</h2>
+        <h2 className="text-center">Add/Edit a Reservation</h2>
         {errors.map((error) => {
           return (
             <div key={error + first_name} className="alert alert-danger">
@@ -104,6 +104,7 @@ function NewReservation({ setDate }) {
             type="text"
             name="first_name"
             placeholder="first_name"
+            className="form-control w-50 mx-auto"
             value={first_name}
             onChange={(e) => onChange(e)}
           />
@@ -111,6 +112,7 @@ function NewReservation({ setDate }) {
             type="text"
             name="last_name"
             placeholder="last_name"
+            className="form-control w-50 mx-auto"
             value={last_name}
             onChange={(e) => onChange(e)}
           />
@@ -118,6 +120,7 @@ function NewReservation({ setDate }) {
             type="text"
             name="mobile_number"
             placeholder="mobile_number"
+            className="form-control w-50 mx-auto"
             value={mobile_number}
             onChange={(e) => onChange(e)}
           />
@@ -125,6 +128,7 @@ function NewReservation({ setDate }) {
             type="date"
             name="reservation_date"
             placeholder="reservation_date"
+            className="form-control w-50 mx-auto"
             value={reservation_date}
             onChange={(e) => onChange(e)}
           />{" "}
@@ -132,6 +136,7 @@ function NewReservation({ setDate }) {
             type="time"
             name="reservation_time"
             placeholder="reservation_time"
+            className="form-control w-50 mx-auto"
             value={reservation_time}
             onChange={(e) => onChange(e)}
           />{" "}
@@ -139,13 +144,26 @@ function NewReservation({ setDate }) {
             type="number"
             name="people"
             placeholder="people"
+            className="form-control w-50 mx-auto"
             value={people}
             min="1"
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Submit</button>
+          <div className="d-flex flex-row justify-content-center">
+            <button
+              type="submit"
+              className=" btn btn-primary form-control w-25"
+            >
+              Submit
+            </button>
+          </div>
         </form>
-        <button onClick={cancelHandler}>Cancel</button>
+        <button
+          className="btn btn-secondary form-control w-25"
+          onClick={cancelHandler}
+        >
+          Cancel
+        </button>
       </div>
     </React.Fragment>
   );

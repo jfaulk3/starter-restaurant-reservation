@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { listReservations, cancelReservation } from "../utils/api";
 
@@ -25,53 +26,70 @@ function ReservationList({ reservations, date, setReservations = null }) {
       console.log(error);
     }
   }
-  return reservations.map((reservation) => {
-    return (
-      <div key={reservation.reservation_id} className="my-4">
-        <div className="row m-0 p-0">
-          <div className="col">{reservation.first_name}</div>
-          <div className="col"> {reservation.last_name}</div>
-          <div className="col"> {reservation.mobile_number}</div>
-          <div className="col"> {reservation.reservation_date}</div>
-          <div className="col"> {reservation.reservation_time}</div>
-          <div
-            className="col"
-            data-reservation-id-status={reservation.reservation_id}
-          >
-            {reservation.status || "booked"}
-          </div>
-          {reservation.status === "booked" && (
-            <Link
-              className="btn btn-primary col col-1"
-              to={`/reservations/${reservation.reservation_id}/edit`}
-            >
-              Edit
-            </Link>
-          )}
-          {reservation.status === "booked" && (
-            <Link
-              className="btn btn-secondary col col-1"
-              to={`/reservations/${reservation.reservation_id}/seat`}
-              href={`/reservations/${reservation.reservation_id}/seat`}
-            >
-              Seat
-            </Link>
-          )}
-          {reservation.status === "booked" && (
-            <button
-              onClick={deleteHandler}
-              value={reservation.reservation_id}
-              href={`/reservations/${reservation.reservation_id}/edit`}
-              data-reservation-id-cancel={reservation.reservation_id}
-              className="btn btn-primary col col-1"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
+  return (
+    <React.Fragment>
+      <div className="row m-0 p-3">
+        <div className="col col-1">First Name</div>
+        <div className="col col-2">Last Name</div>
+        <div className="col col-2">Mobile Number</div>
+        <div className="col col-2">Reservation Date</div>
+
+        <div className="col col-1"> Time</div>
+
+        <div className="col col-1"> Status</div>
       </div>
-    );
-  });
+      {reservations.map((reservation, index) => {
+        return (
+          <div key={reservation.reservation_id}>
+            <div
+              className={`row m-0 p-3 bg-${index % 2 === 0 ? "info" : "light"}`}
+            >
+              <div className="col col-1">{reservation.first_name}</div>
+              <div className="col col-2"> {reservation.last_name}</div>
+              <div className="col col-2"> {reservation.mobile_number}</div>
+              <div className="col col-2"> {reservation.reservation_date}</div>
+              <div className="col col-1"> {reservation.reservation_time}</div>
+              <div
+                className="col"
+                data-reservation-id-status={reservation.reservation_id}
+              >
+                {reservation.status || "booked"}
+              </div>
+              {reservation.status === "booked" && (
+                <Link
+                  className="btn btn-primary col col-1"
+                  to={`/reservations/${reservation.reservation_id}/edit`}
+                >
+                  Edit
+                </Link>
+              )}
+              {reservation.status === "booked" && (
+                <Link
+                  className="btn btn-secondary col col-1"
+                  to={`/reservations/${reservation.reservation_id}/seat`}
+                  href={`/reservations/${reservation.reservation_id}/seat`}
+                >
+                  Seat
+                </Link>
+              )}
+              {reservation.status === "booked" && (
+                <button
+                  onClick={deleteHandler}
+                  value={reservation.reservation_id}
+                  href={`/reservations/${reservation.reservation_id}/edit`}
+                  data-reservation-id-cancel={reservation.reservation_id}
+                  className="btn btn-primary col col-1"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+      ;
+    </React.Fragment>
+  );
 }
 
 export default ReservationList;

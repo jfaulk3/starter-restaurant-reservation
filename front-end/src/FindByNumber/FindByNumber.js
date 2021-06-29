@@ -30,7 +30,7 @@ function FindByNumber({ date }) {
   }, [reservations]);
   return (
     <React.Fragment>
-      <h1>Search for Reservation by Number</h1>
+      <h1 className="text-center">Search for Reservation by Number</h1>
       {errors.map((error) => {
         return (
           <p key={error} className="alert alert-danger">
@@ -41,14 +41,21 @@ function FindByNumber({ date }) {
       <div>
         <form onSubmit={onSubmitForm}>
           <input
-            className="w-50"
             type="text"
             name="mobile_number"
             placeholder="Enter a customer's phone number"
+            className="form-control w-50 mx-auto"
             value={mobile_number}
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Find</button>
+          <div className="d-flex flex-row justify-content-center">
+            <button
+              type="submit"
+              className=" btn btn-secondary form-control mx-auto w-50"
+            >
+              Find
+            </button>
+          </div>
         </form>
       </div>
       <ReservationList

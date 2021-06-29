@@ -66,8 +66,8 @@ function Dashboard({ date }) {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+      <div>
+        <h4 className="mb-2 text-center">Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       <ReservationList
@@ -76,17 +76,19 @@ function Dashboard({ date }) {
         setReservations={setReservations}
       />
       <ErrorAlert error={tablesError} />
-      <h4 className="text-center">Tables</h4>
+      <h4 className="text-center mt-3">Tables</h4>
       <div className="row">
         <div className="col col-2"> Table Name</div>
         <div className="col col-2"> Capacity</div>
         <div className="col col-2">Occupied?</div>
       </div>
-      {tables.map((table) => {
+      {tables.map((table, index) => {
         return (
           <div
             key={table.table_id}
-            className="row my-4"
+            className={`row m-0 p-3 bg-${
+              index % 2 === 0 ? "success" : "light"
+            }`}
             data-table-id-status={table.table_id}
           >
             <div className="col col-2"> {table.table_name}</div>
