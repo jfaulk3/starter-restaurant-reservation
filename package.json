@@ -47,6 +47,5 @@
   },
   "keywords": [],
   "author": "Thinkful, Inc.",
-  "license": "UNLICENSED",
-  "proxy": "http://localhost:5000"
+  "license": "UNLICENSED"
 }
