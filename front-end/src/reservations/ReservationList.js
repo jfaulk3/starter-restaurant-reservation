@@ -87,7 +87,6 @@ function ReservationList({ reservations, date, setReservations = null }) {
           </div>
         );
       })}
-      ;
     </React.Fragment>
   );
 }

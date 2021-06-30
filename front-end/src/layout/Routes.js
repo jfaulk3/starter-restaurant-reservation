@@ -46,7 +46,7 @@ function Routes() {
         <FindByNumber date={date} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={date} />
+        <Dashboard date={date} setDate={setDate} />
       </Route>
       <Route>
         <NotFound />
