@@ -11,7 +11,7 @@ https://app.swaggerhub.com/apis-docs/personal7122/capstone/1.0.0
 ### About this application
 
 ![Searching for reservations by number](/images/findRes.png?raw=true)
-
+![Adding a table to the database](/images/addTable.png?raw=true)
 This application allows users to make restaurant reservations for any dates in the future. The user can create tables of varying sizes and assign the reservations to those tables if the sizes are compatable. When the reservations are finished the user can then free up the tables by marking them as finished, thus allowing them to be used for other reservations.
 
 ### Technologies used
